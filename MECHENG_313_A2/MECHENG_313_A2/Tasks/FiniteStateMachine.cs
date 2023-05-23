@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using Xamarin.Essentials;
+using static Xamarin.Forms.Internals.Profile;
 
 namespace MECHENG_313_A2.Tasks
 {
@@ -15,7 +16,7 @@ namespace MECHENG_313_A2.Tasks
         private struct stateTrans
         {
             public string nState;
-            public List<Action> actions;
+            public List<TimestampedAction> actions;
         }
         stateTrans[,] FST = new stateTrans[2, 4];
 
@@ -41,12 +42,8 @@ namespace MECHENG_313_A2.Tasks
             int x, y;
             stateMap.TryGetValue(state, out y);
             eventMap.TryGetValue(eventTrigger, out x);
-            Action ac = () =>
-            {
-                DateTime date1 = new DateTime(2015, 12, 25);
-                action(date1 );
-            };
-            FST[x, y].actions.Add(ac);
+
+            FST[x, y].actions.Add(action);
             
         }
 
@@ -67,8 +64,8 @@ namespace MECHENG_313_A2.Tasks
             nextState = FST[x, y].nState;
             for (int i = 0; i < FST[x, y].actions.Count; i++)
             {
-                DateTime date1 = new DateTime(2015, 12, 25);//This is just random garbage. at some point, i'll be passed 
-                ThreadPool.QueueUserWorkItem((state)=> FST[x, y].actions[i]());
+                 
+                ThreadPool.QueueUserWorkItem((state)=> FST[x, y].actions[i](DateTime.Now));//when the task is executed, grab the current time and pass it to the action
             }
             SetCurrentState(nextState);
             return nextState;
