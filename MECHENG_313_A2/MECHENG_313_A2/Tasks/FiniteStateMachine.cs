@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using Xamarin.Essentials;
 
 namespace MECHENG_313_A2.Tasks
 {
@@ -14,7 +15,7 @@ namespace MECHENG_313_A2.Tasks
         private struct stateTrans
         {
             public string nState;
-            public List<TimestampedAction> actions;
+            public List<Action> actions;
         }
         stateTrans[,] FST = new stateTrans[2, 4];
 
@@ -40,7 +41,13 @@ namespace MECHENG_313_A2.Tasks
             int x, y;
             stateMap.TryGetValue(state, out y);
             eventMap.TryGetValue(eventTrigger, out x);
-            FST[x, y].actions.Add(action);
+            Action ac = () =>
+            {
+                DateTime date1 = new DateTime(2015, 12, 25);
+                action(date1 );
+            };
+            FST[x, y].actions.Add(ac);
+            
         }
 
         public string GetCurrentState()
@@ -48,11 +55,23 @@ namespace MECHENG_313_A2.Tasks
             // TODO: Implement this
             return stateP;
         }
+        
 
         public string ProcessEvent(string eventTrigger)
         {
             // TODO: Implement this
-            return null;
+            string nextState;
+            int x, y;
+            stateMap.TryGetValue(stateP, out y);
+            eventMap.TryGetValue(eventTrigger, out x);
+            nextState = FST[x, y].nState;
+            for (int i = 0; i < FST[x, y].actions.Count; i++)
+            {
+                DateTime date1 = new DateTime(2015, 12, 25);//This is just random garbage. at some point, i'll be passed 
+                ThreadPool.QueueUserWorkItem((state)=> FST[x, y].actions[i]());
+            }
+            SetCurrentState(nextState);
+            return nextState;
         }
 
         public void SetCurrentState(string state)
