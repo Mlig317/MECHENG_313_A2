@@ -13,8 +13,8 @@ namespace MECHENG_313_A2.Tasks
         //finitestatemachine uses a finite state table (a 2d array) of structs to transition between states. rows correspond to states, columns to events
         //using a dictionary to map input string states/events to array indexes. Imo this is faster than labelling each cell struct with current state and event 
         //and having to index over whole array to find element. (drawback, need to update dictionary with each new state)
-        private string stateP;
-        private struct stateTrans //SHADOW WIZARD MONEY GANG
+        private string stateP; //curent state
+        private struct stateTrans 
         {
             public string nState;
             public List<TimestampedAction> actions;
@@ -84,9 +84,11 @@ namespace MECHENG_313_A2.Tasks
             // TODO: Implement this
             string nextState;
             int x, y;
+            
             stateMap.TryGetValue(stateP, out y);
             eventMap.TryGetValue(eventTrigger, out x);
             nextState = FST[x, y].nState;
+          
             for (int i = 0; i < FST[x, y].actions.Count; i++)
             {
                  

@@ -2,6 +2,7 @@
 using MECHENG_313_A2.Views;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,6 +21,7 @@ namespace MECHENG_313_A2.Tasks
             TimestampedAction Y = (timestamp) => fakeArduino.SetState(TrafficLightState.Yellow);
             TimestampedAction R = (timestamp) => fakeArduino.SetState(TrafficLightState.Red);
             TimestampedAction B = (timestamp) => fakeArduino.SetState(TrafficLightState.None);
+
             
 
 
@@ -37,16 +39,26 @@ namespace MECHENG_313_A2.Tasks
         {
             // TODO: Implement this
         }
+        
 
         public async Task<bool> EnterConfigMode()
         {
             // TODO: Implement this
-            return false;
+            fsm.ProcessEvent("config");
+            return fsm.GetCurrentState() == "Y'";
+            
+            
         }
 
         public void ExitConfigMode()
         {
             // TODO: Implement this
+            string cState;
+            cState = fsm.GetCurrentState();
+            if (cState == "Y'" || cState == "B")
+            {
+                fsm.ProcessEvent("config");
+            }
         }
 
         public async Task<string[]> GetPortNames()
@@ -67,6 +79,11 @@ namespace MECHENG_313_A2.Tasks
             // You can also create/write to file(s) through System.IO.File. 
             // See https://learn.microsoft.com/en-us/xamarin/xamarin-forms/data-cloud/data/files?tabs=windows, and
             // https://learn.microsoft.com/en-us/dotnet/api/system.io.file?view=netstandard-2.0 for more details.
+
+            string projectPath = Directory.GetCurrentDirectory(); //get the project working dir
+            string filePath = Path.Combine(projectPath, "log.txt"); //make this the file dir
+            File.Create(filePath).Close();                          //create the file
+
             return null;
         }
 
@@ -89,6 +106,7 @@ namespace MECHENG_313_A2.Tasks
         public void Tick()
         {
             // TODO: Implement this
+            fsm.ProcessEvent("tick");
         }
     }
 }
