@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using Xamarin.Essentials;
+using Xamarin.Forms;
 using static Xamarin.Forms.Internals.Profile;
 
 namespace MECHENG_313_A2.Tasks
@@ -22,17 +23,19 @@ namespace MECHENG_313_A2.Tasks
 
         Dictionary<string, int> stateMap = new Dictionary<string, int>
         {
-            {"R", 0},
+            {"G", 0},       //states that will be changed by events
             {"Y", 1 },
-            {"G", 2 },
-            {"C", 3}
+            {"R", 2 },
+            {"Y'", 3},
+            {"B'", 4}
 
         };
+        
 
         Dictionary<string, int> eventMap = new Dictionary<string, int>
         {
-            {"event1", 0},  //populate these when we know what events will occur
-            {"event2", 1 }
+            {"tick", 0},    //events that will change the state
+            {"config", 1 }
 
         };
 
@@ -44,7 +47,29 @@ namespace MECHENG_313_A2.Tasks
             eventMap.TryGetValue(eventTrigger, out x);
 
             FST[x, y].actions.Add(action);
-            
+
+        }
+        /// <summary>
+        /// this should initialize the finite state table with the rules of the finite state machine as set out in task  2. I'm puttin them here as
+        /// it seems best practice to separate them like this
+        /// 
+        /// rules are set out in the table but i'm treating C state as two states (B and Y')
+        /// start state is assumed to be green on (cheeky bit of ladder logic below)
+        /// order goes G -> Y -> R -> G
+        ///                        -> Y' -> B -> Y'
+        ///                              -> R|-> R
+        /// </summary>
+        public void iTable()
+        {
+            //current state, next state, event trigger
+            SetNextState("G", "Y", "tick");
+            SetNextState("Y", "R", "tick");
+            SetNextState("R", "G", "tick");
+            SetNextState("Y'", "B", "tick");
+            SetNextState("B", "Y'", "tick");
+            SetNextState("R", "Y'", "config");
+            SetNextState("Y'", "R", "config");
+            SetNextState("B", "R", "config");
         }
 
         public string GetCurrentState()

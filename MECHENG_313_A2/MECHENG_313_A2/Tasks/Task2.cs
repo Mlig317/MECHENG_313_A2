@@ -1,4 +1,5 @@
-﻿using MECHENG_313_A2.Views;
+﻿using MECHENG_313_A2.Serial;
+using MECHENG_313_A2.Views;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,10 +9,30 @@ namespace MECHENG_313_A2.Tasks
 {
     internal class Task2 : IController
     {
+        MockSerialInterface fakeArduino = new MockSerialInterface();
+        FiniteStateMachine fsm = new FiniteStateMachine();
         public virtual TaskNumber TaskNumber => TaskNumber.Task2;
 
         protected ITaskPage _taskPage;
+        private void iAction() // initialize actions except its super scuffed cos idk how timestamped actions are supposed to go wtf is a lambda expression
+        {
+            TimestampedAction G = (timestamp) => fakeArduino.SetState(TrafficLightState.Green);
+            TimestampedAction Y = (timestamp) => fakeArduino.SetState(TrafficLightState.Yellow);
+            TimestampedAction R = (timestamp) => fakeArduino.SetState(TrafficLightState.Red);
+            TimestampedAction B = (timestamp) => fakeArduino.SetState(TrafficLightState.None);
+            
 
+
+            fsm.AddAction("G","tick",Y);
+            fsm.AddAction("Y", "tick", R);
+            fsm.AddAction("R", "tick", G);
+            fsm.AddAction("Y'", "tick", B); 
+            fsm.AddAction("B", "tick", Y);
+
+            fsm.AddAction("R", "config", Y);
+            fsm.AddAction("Y'", "tick", R);
+            fsm.AddAction("B", "tick", R);
+        }
         public void ConfigLightLength(int redLength, int greenLength)
         {
             // TODO: Implement this
@@ -31,7 +52,7 @@ namespace MECHENG_313_A2.Tasks
         public async Task<string[]> GetPortNames()
         {
             // TODO: Implement this
-            return new string[0];
+            return await fakeArduino.GetPortNames();
         }
 
         public async Task<string> OpenLogFile()
@@ -52,7 +73,7 @@ namespace MECHENG_313_A2.Tasks
         public async Task<bool> OpenPort(string serialPort, int baudRate)
         {
             // TODO: Implement this
-            return false;
+            return await fakeArduino.OpenPort(serialPort,baudRate);
         }
 
         public void RegisterTaskPage(ITaskPage taskPage)
