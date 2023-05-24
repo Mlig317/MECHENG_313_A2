@@ -14,7 +14,7 @@ namespace MECHENG_313_A2.Tasks
         //using a dictionary to map input string states/events to array indexes. Imo this is faster than labelling each cell struct with current state and event 
         //and having to index over whole array to find element. (drawback, need to update dictionary with each new state)
         private string stateP;
-        private struct stateTrans
+        private struct stateTrans //SHADOW WIZARD MONEY GANG
         {
             public string nState;
             public List<TimestampedAction> actions;
