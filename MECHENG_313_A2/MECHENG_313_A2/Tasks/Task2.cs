@@ -1,4 +1,5 @@
 ﻿using MECHENG_313_A2.Serial;
+using MECHENG_313_A2.ViewModels;
 using MECHENG_313_A2.Views;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace MECHENG_313_A2.Tasks
     {
         MockSerialInterface fakeArduino = new MockSerialInterface();
         FiniteStateMachine fsm = new FiniteStateMachine();
+        
         public virtual TaskNumber TaskNumber => TaskNumber.Task2;
 
         protected ITaskPage _taskPage;
@@ -108,6 +110,7 @@ namespace MECHENG_313_A2.Tasks
         {
             // TODO: Implement this
             fsm.ProcessEvent("tick");
+            //AddLogEntry(fsm.GetCurrentState());
         }
     }
 }
