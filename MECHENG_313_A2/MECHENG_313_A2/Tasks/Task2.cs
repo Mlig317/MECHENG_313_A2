@@ -80,11 +80,10 @@ namespace MECHENG_313_A2.Tasks
             // See https://learn.microsoft.com/en-us/xamarin/xamarin-forms/data-cloud/data/files?tabs=windows, and
             // https://learn.microsoft.com/en-us/dotnet/api/system.io.file?view=netstandard-2.0 for more details.
 
-            string projectPath = Directory.GetCurrentDirectory(); //get the project working dir
-            string filePath = Path.Combine(projectPath, "log.txt"); //make this the file dir
-            File.Create(filePath).Close();                          //create the file
+            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log.txt");
+            File.Create(filePath).Close();                          //create the file 🧙
 
-            return null;
+            return filePath;
         }
 
         public async Task<bool> OpenPort(string serialPort, int baudRate)
@@ -100,6 +99,8 @@ namespace MECHENG_313_A2.Tasks
 
         public void Start()
         {
+            iAction(); //populate the actions
+            fsm.iTable(); //populate the states
             // TODO: Implement this
         }
 
