@@ -111,6 +111,9 @@ namespace MECHENG_313_A2.Tasks
             // TODO: Implement this
             fsm.ProcessEvent("tick");
             //AddLogEntry(fsm.GetCurrentState());
+            _taskPage.AddLogEntry(fsm.GetCurrentState());
+            //SerialPrint(timestamp,fsm.GetCurrentState());
+            _taskPage.SerialPrint(DateTime.Now, " -- Current State -- " + fsm.GetCurrentState() + " | ");
         }
     }
 }
