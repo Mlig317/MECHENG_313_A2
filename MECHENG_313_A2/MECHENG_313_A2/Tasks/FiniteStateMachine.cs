@@ -98,7 +98,7 @@ namespace MECHENG_313_A2.Tasks
             eventMap.TryGetValue(eventTrigger, out x);
             nextState = FST[x, y].nState;
           
-            for (int i = 0; i < FST[x, y].actions.Count; i++)
+            for (int i = 0; i < (FST[x, y].actions.Count - 1); i++)
             {
                  
                 ThreadPool.QueueUserWorkItem((state)=> FST[x, y].actions[i](DateTime.Now));//when the task is executed, grab the current time and pass it to the action
