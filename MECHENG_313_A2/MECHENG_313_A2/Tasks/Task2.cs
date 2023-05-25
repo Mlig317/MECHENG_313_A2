@@ -55,9 +55,13 @@ namespace MECHENG_313_A2.Tasks
             fsm.ProcessEvent("config");
             _taskPage.AddLogEntry(fsm.GetCurrentState());
             _taskPage.SerialPrint(DateTime.Now, " -- Current State -- " + fsm.GetCurrentState() + " | ");
+
+            if (fsm.GetCurrentState() == "C")
+            {
+                _taskPage.SetTrafficLightState(TrafficLightState.Yellow);
+            }
+            
             return fsm.GetCurrentState() == "C";
-            
-            
         }
 
         public void ExitConfigMode()
@@ -72,6 +76,7 @@ namespace MECHENG_313_A2.Tasks
             }
             _taskPage.AddLogEntry(fsm.GetCurrentState());
             _taskPage.SerialPrint(DateTime.Now, " -- Current State -- " + fsm.GetCurrentState() + " | ");
+            _taskPage.SetTrafficLightState(TrafficLightState.Red);
         }
 
         public async Task<string[]> GetPortNames()
@@ -120,6 +125,7 @@ namespace MECHENG_313_A2.Tasks
             //PrintNStates();
             _taskPage.AddLogEntry(fsm.GetCurrentState());
             _taskPage.SerialPrint(DateTime.Now, " -- Current State -- " + fsm.GetCurrentState() + " | ");
+            _taskPage.SetTrafficLightState(TrafficLightState.Green);
             // TODO: Implement this
         }
 
@@ -127,10 +133,29 @@ namespace MECHENG_313_A2.Tasks
         {
             // TODO: Implement this
             fsm.ProcessEvent("tick");
-            //AddLogEntry(fsm.GetCurrentState());
             _taskPage.AddLogEntry(fsm.GetCurrentState());
-            //SerialPrint(timestamp,fsm.GetCurrentState());
             _taskPage.SerialPrint(DateTime.Now, " -- Current State -- " + fsm.GetCurrentState() + " | ");
+
+            // !!! To condense need to find way to convert string to TrafficLightState !!!
+            switch(fsm.GetCurrentState())
+                {
+                case "G":
+                    _taskPage.SetTrafficLightState(TrafficLightState.Green);
+                    break;
+                case "Y":
+                    _taskPage.SetTrafficLightState(TrafficLightState.Yellow);
+                    break;
+                case "R":
+                    _taskPage.SetTrafficLightState(TrafficLightState.Red);
+                    break;
+                case "C":
+                    _taskPage.SetTrafficLightState(TrafficLightState.Yellow);
+                    break;
+                default:
+                    _taskPage.SetTrafficLightState(TrafficLightState.None);
+                    break;
+            }
+
         }
     }
 }
