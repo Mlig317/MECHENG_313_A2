@@ -23,19 +23,24 @@ namespace MECHENG_313_A2.Tasks
             TimestampedAction Y = (timestamp) => fakeArduino.SetState(TrafficLightState.Yellow);
             TimestampedAction R = (timestamp) => fakeArduino.SetState(TrafficLightState.Red);
             TimestampedAction B = (timestamp) => fakeArduino.SetState(TrafficLightState.None);
+            TimestampedAction DN = (timestamp) => DoNothing(); //this fills in empty spots so that the compiler doesn't freak out when theres no action to do
 
-            
+
 
 
             fsm.AddAction("G","tick",Y);
             fsm.AddAction("Y", "tick", R);
             fsm.AddAction("R", "tick", G);
-            fsm.AddAction("Y'", "tick", B); 
+            fsm.AddAction("C", "tick", B); 
             fsm.AddAction("B", "tick", Y);
 
             fsm.AddAction("R", "config", Y);
-            fsm.AddAction("Y'", "tick", R);
-            fsm.AddAction("B", "tick", R);
+            fsm.AddAction("C", "config", R);
+            fsm.AddAction("B", "config", R);
+
+            //extra cases so that it doesn't try and execute actions that aren't there when trying to config from g/y
+            fsm.AddAction("G", "config", DN);
+            fsm.AddAction("Y", "config", DN);
         }
         public void ConfigLightLength(int redLength, int greenLength)
         {
@@ -45,9 +50,12 @@ namespace MECHENG_313_A2.Tasks
 
         public async Task<bool> EnterConfigMode()
         {
+            
             // TODO: Implement this
             fsm.ProcessEvent("config");
-            return fsm.GetCurrentState() == "Y'";
+            _taskPage.AddLogEntry(fsm.GetCurrentState());
+            _taskPage.SerialPrint(DateTime.Now, " -- Current State -- " + fsm.GetCurrentState() + " | ");
+            return fsm.GetCurrentState() == "C";
             
             
         }
@@ -55,12 +63,15 @@ namespace MECHENG_313_A2.Tasks
         public void ExitConfigMode()
         {
             // TODO: Implement this
+            
             string cState;
             cState = fsm.GetCurrentState();
-            if (cState == "Y'" || cState == "B")
+            if (cState == "C" || cState == "B")
             {
                 fsm.ProcessEvent("config");
             }
+            _taskPage.AddLogEntry(fsm.GetCurrentState());
+            _taskPage.SerialPrint(DateTime.Now, " -- Current State -- " + fsm.GetCurrentState() + " | ");
         }
 
         public async Task<string[]> GetPortNames()
@@ -98,11 +109,17 @@ namespace MECHENG_313_A2.Tasks
         {
             _taskPage = taskPage;
         }
-
+        public void DoNothing()
+        {
+            // does nothing when trying to change from green/yellow to config
+        }
         public void Start()
         {
             iAction(); //populate the actions
             fsm.iTable(); //populate the states
+            //PrintNStates();
+            _taskPage.AddLogEntry(fsm.GetCurrentState());
+            _taskPage.SerialPrint(DateTime.Now, " -- Current State -- " + fsm.GetCurrentState() + " | ");
             // TODO: Implement this
         }
 

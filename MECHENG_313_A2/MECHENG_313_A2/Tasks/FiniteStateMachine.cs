@@ -14,7 +14,7 @@ namespace MECHENG_313_A2.Tasks
         //using a dictionary to map input string states/events to array indexes. Imo this is faster than labelling each cell struct with current state and event 
         //and having to index over whole array to find element. (drawback, need to update dictionary with each new state)
         private string stateP = "G"; //curent state, default to green
-        private struct stateTrans 
+        public struct stateTrans 
         {
             public string nState;
             public List<TimestampedAction> actions;
@@ -25,18 +25,18 @@ namespace MECHENG_313_A2.Tasks
                 actions = new List<TimestampedAction>(); // Initialize the actions list
             }
         }
-        stateTrans[,] FST = new stateTrans[2, 4];
+        public stateTrans[,] FST = new stateTrans[2, 5];
 
         Dictionary<string, int> stateMap = new Dictionary<string, int>
         {
             {"G", 0},       //states that will be changed by events
-            {"Y", 1 },
-            {"R", 2 },
-            {"Y'", 3},
-            {"B'", 4}
+            {"Y", 1},
+            {"R", 2},
+            {"C", 3},
+            {"B", 4}
 
         };
-        
+       
 
         Dictionary<string, int> eventMap = new Dictionary<string, int>
         {
@@ -74,11 +74,13 @@ namespace MECHENG_313_A2.Tasks
             SetNextState("G", "Y", "tick");
             SetNextState("Y", "R", "tick");
             SetNextState("R", "G", "tick");
-            SetNextState("Y'", "B", "tick");
-            SetNextState("B", "Y'", "tick");
-            SetNextState("R", "Y'", "config");
-            SetNextState("Y'", "R", "config");
+            SetNextState("C", "B", "tick");
+            SetNextState("B", "C", "tick");
+            SetNextState("R", "C", "config");
+            SetNextState("C", "R", "config");
             SetNextState("B", "R", "config");
+            SetNextState("G", "G", "config");
+            SetNextState("Y", "Y", "config");
         }
 
         public string GetCurrentState()
@@ -97,7 +99,7 @@ namespace MECHENG_313_A2.Tasks
             stateMap.TryGetValue(stateP, out y);
             eventMap.TryGetValue(eventTrigger, out x);
             nextState = FST[x, y].nState;
-          
+            //nextState = FST[10, y].nState;
             for (int i = 0; i < (FST[x, y].actions.Count - 1); i++)
             {
                  
@@ -120,6 +122,15 @@ namespace MECHENG_313_A2.Tasks
             stateMap.TryGetValue(state, out y);
             eventMap.TryGetValue(eventTrigger, out x);
             FST[x,y].nState = nextState;
+            if(nextState == "C")
+            {
+                   if(state == "G")
+                {
+                    FST[10, y].nState = nextState;
+                }
+                
+            }
+            
         }
 
        
