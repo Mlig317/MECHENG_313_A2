@@ -13,7 +13,7 @@ namespace MECHENG_313_A2.Tasks
     {
         MockSerialInterface fakeArduino = new MockSerialInterface();
         public FiniteStateMachine fsm = new FiniteStateMachine();
-        
+        public int rTime = 1000, gTime = 1000;
         public virtual TaskNumber TaskNumber => TaskNumber.Task2;
 
         protected ITaskPage _taskPage;
@@ -42,9 +42,12 @@ namespace MECHENG_313_A2.Tasks
             fsm.AddAction("G", "config", DN);
             fsm.AddAction("Y", "config", DN);
         }
-        public void ConfigLightLength(int redLength, int greenLength)
+        public void ConfigLightLength(int redLength, int greenLength) 
         {
-            // TODO: Implement this
+            // just make it a setter idk
+            rTime = redLength;
+
+            gTime = greenLength;
         }
         
 
@@ -99,7 +102,7 @@ namespace MECHENG_313_A2.Tasks
             // https://learn.microsoft.com/en-us/dotnet/api/system.io.file?view=netstandard-2.0 for more details.
 
             string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log.txt");
-            File.Create(filePath).Close();                          //create the file 🧙
+            File.Create(filePath).Close();                          //create the file 🧙✨✨✨✨✨✨
 
             return filePath;
         }
