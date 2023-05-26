@@ -12,12 +12,12 @@ namespace MECHENG_313_A2.Tasks
     internal class Task2 : IController
     {
         MockSerialInterface fakeArduino = new MockSerialInterface();
-        FiniteStateMachine fsm = new FiniteStateMachine();
+        public FiniteStateMachine fsm = new FiniteStateMachine();
         
         public virtual TaskNumber TaskNumber => TaskNumber.Task2;
 
         protected ITaskPage _taskPage;
-        private void iAction() // initialize actions except its super scuffed cos idk how timestamped actions are supposed to go wtf is a lambda expression
+        public void iAction() // initialize actions except its super scuffed cos idk how timestamped actions are supposed to go wtf is a lambda expression
         {
             TimestampedAction G = (timestamp) => fakeArduino.SetState(TrafficLightState.Green);
             TimestampedAction Y = (timestamp) => fakeArduino.SetState(TrafficLightState.Yellow);
@@ -118,7 +118,7 @@ namespace MECHENG_313_A2.Tasks
         {
             // does nothing when trying to change from green/yellow to config
         }
-        public void Start()
+        public virtual void Start()
         {
             iAction(); //populate the actions
             fsm.iTable(); //populate the states
