@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Timers;
+using System.Threading.Tasks;
 using static MECHENG_313_A2.Tasks.FiniteStateMachine;
 
 namespace MECHENG_313_A2.Tasks
@@ -54,6 +55,24 @@ namespace MECHENG_313_A2.Tasks
         }
         // TODO: Implement this
        
+        // Allow you to queue the config mode at any state but will keep ticking until it reaches red
+        public override async Task<bool> EnterConfigMode()
+        {
+            if (fsm.GetCurrentState() != "R")
+            {
+                while (fsm.GetCurrentState() != "R")
+                {
+                    await Task.Delay(100);
+                }
+                // needs to wait till the end of the red state before entering config mode
+            }
+            fsm.ProcessEvent("config");
+            _taskPage.AddLogEntry(fsm.GetCurrentState());
+            _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
+            
+            return true;
+            
+        }
 
         public override void Start()
         {

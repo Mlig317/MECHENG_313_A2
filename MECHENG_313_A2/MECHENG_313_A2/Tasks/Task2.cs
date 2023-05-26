@@ -42,7 +42,7 @@ namespace MECHENG_313_A2.Tasks
             fsm.AddAction("G", "config", DN);
             fsm.AddAction("Y", "config", DN);
         }
-        public void ConfigLightLength(int redLength, int greenLength) 
+        public void ConfigLightLength(int redLength, int greenLength)
         {
             // just make it a setter idk
             rTime = redLength;
@@ -51,9 +51,8 @@ namespace MECHENG_313_A2.Tasks
         }
         
 
-        public async Task<bool> EnterConfigMode()
-        {
-            
+        public virtual async Task<bool> EnterConfigMode()
+        { 
             // TODO: Implement this
             fsm.ProcessEvent("config");
             _taskPage.AddLogEntry(fsm.GetCurrentState());
@@ -102,7 +101,7 @@ namespace MECHENG_313_A2.Tasks
             // https://learn.microsoft.com/en-us/dotnet/api/system.io.file?view=netstandard-2.0 for more details.
 
             string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log.txt");
-            File.Create(filePath).Close();                          //create the file 🧙✨✨✨✨✨✨
+            File.Create(filePath).Close();                          //create the file 🧙
 
             return filePath;
         }
