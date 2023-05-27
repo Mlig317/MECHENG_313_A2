@@ -67,7 +67,7 @@ namespace MECHENG_313_A2.Tasks
                 // needs to wait till the end of the red state before entering config mode
             }
             fsm.ProcessEvent("config");
-            _taskPage.AddLogEntry(fsm.GetCurrentState());
+            _taskPage.AddLogEntry(LogWriter());
             _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
             
             return true;
@@ -79,7 +79,7 @@ namespace MECHENG_313_A2.Tasks
             iAction(); //populate the actions
             fsm.iTable(); //populate the states
             _taskPage.AddLogEntry("starting task 3");
-            _taskPage.AddLogEntry(fsm.GetCurrentState());
+            _taskPage.AddLogEntry(LogWriter());
             _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
             _taskPage.SetTrafficLightState(TrafficLightState.Green);
             timer = new Timer();

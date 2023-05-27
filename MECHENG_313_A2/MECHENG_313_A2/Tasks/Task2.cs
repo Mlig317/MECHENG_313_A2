@@ -76,7 +76,7 @@ namespace MECHENG_313_A2.Tasks
             {
                 fsm.ProcessEvent("config");
             }
-            _taskPage.AddLogEntry(fsm.GetCurrentState());
+            _taskPage.AddLogEntry(LogWriter());
             _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
             _taskPage.SetTrafficLightState(TrafficLightState.Red);
         }
@@ -120,13 +120,22 @@ namespace MECHENG_313_A2.Tasks
         {
             // does nothing when trying to change from green/yellow to config
         }
+        public string LogWriter()
+        {
+            string statew = fsm.GetCurrentState();
+            DateTime now = DateTime.Now;
+            string formattedDateTime = now.ToString("yyyy-MM-dd HH:mm:ss");
+            string combinedString = String.Concat(statew, " ", formattedDateTime);
+
+            return combinedString;
+        }
         public virtual void Start()
         {
             iAction(); //populate the actions
             fsm.iTable(); //populate the states
             //PrintNStates();
-            _taskPage.AddLogEntry(fsm.GetCurrentState());
-            _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
+            _taskPage.AddLogEntry(LogWriter());
+            _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() );
             _taskPage.SetTrafficLightState(TrafficLightState.Green);
             // TODO: Implement this
         }
@@ -135,7 +144,7 @@ namespace MECHENG_313_A2.Tasks
         {
             // TODO: Implement this
             fsm.ProcessEvent("tick");
-            _taskPage.AddLogEntry(fsm.GetCurrentState());
+            _taskPage.AddLogEntry(LogWriter());
             _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
 
             // !!! To condense need to find way to convert string to TrafficLightState !!!

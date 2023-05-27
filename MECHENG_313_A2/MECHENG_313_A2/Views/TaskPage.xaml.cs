@@ -3,6 +3,7 @@ using MECHENG_313_A2.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -389,17 +390,26 @@ namespace MECHENG_313_A2.Views
                 }
             });
         }
+        private static readonly object logLock = new object(); // Lock object for synchronization
 
         /// <summary>
         /// Adds a log entry to the view model. This will update the GUI log entries.
         /// </summary>
         /// <param name="logEntry">The log entry to be added to the view model</param>
+        /// 
         public void AddLogEntry(string logEntry)
         {
             // Ensure UI updates are done on the UI thread
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 _viewModel.AddLogEntry(logEntry);
+                lock (logLock) // lock the thread to the logfile writing for syncing purposes
+                {
+                    using (StreamWriter writer = new StreamWriter(_logFilePath, true))
+                    {
+                        writer.WriteLine(logEntry);
+                    }
+                }
             });
         }
 
