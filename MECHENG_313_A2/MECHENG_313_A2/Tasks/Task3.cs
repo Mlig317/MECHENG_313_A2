@@ -45,6 +45,19 @@ namespace MECHENG_313_A2.Tasks
                         _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
                         conT = false;
                         count = 0;
+
+                        switch (fsm.GetCurrentState())
+                        {
+                            case "R":
+                                _taskPage.SetTrafficLightState(TrafficLightState.Red);
+                                break;
+                            case "C":
+                                _taskPage.SetTrafficLightState(TrafficLightState.Yellow);
+                                break;
+                            case "B":
+                                _taskPage.SetTrafficLightState(TrafficLightState.None);
+                                break;
+                        }
                     }
                     else {
                         Tick();
