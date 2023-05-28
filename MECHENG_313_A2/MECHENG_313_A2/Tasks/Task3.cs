@@ -29,11 +29,12 @@ namespace MECHENG_313_A2.Tasks
                     count = 0;
                 }
             }
-            else if ((fsm.GetCurrentState() == "R") || (fsm.GetCurrentState() == "B") || (fsm.GetCurrentState() == "C")) // 
+            else if (fsm.GetCurrentState() == "R") // 
             {
                 count++;
                 if (count == (rTime / 100))
                 {
+
                     if (conT)
                     {
                         fsm.ProcessEvent("config");
@@ -55,10 +56,47 @@ namespace MECHENG_313_A2.Tasks
                                 break;
                         }
                     }
+
                     else
                     {
                         Tick();
 
+                        count = 0;
+                    }
+
+                }
+            }
+            else if ((fsm.GetCurrentState() == "B") || (fsm.GetCurrentState() == "C"))
+            {
+                count++;
+                if (count == 10)
+                {
+                   
+                    if (conT)
+                    {
+                        fsm.ProcessEvent("config");
+                        _taskPage.AddLogEntry(LogWriter("Event Trigger: Exiting Config"));
+                        _taskPage.SerialPrint(DateTime.Now, "Exiting Config  Current State: " + fsm.GetCurrentState() + "\n");
+                        conT = false;
+                        count = 0;
+
+                        switch (fsm.GetCurrentState())
+                        {
+                            case "R":
+                                _taskPage.SetTrafficLightState(TrafficLightState.Red);
+                                break;
+                            case "C":
+                                _taskPage.SetTrafficLightState(TrafficLightState.Yellow);
+                                break;
+                            case "B":
+                                _taskPage.SetTrafficLightState(TrafficLightState.None);
+                                break;
+                        }
+
+                    }
+                    else
+                    {
+                        Tick();
                         count = 0;
                     }
 
