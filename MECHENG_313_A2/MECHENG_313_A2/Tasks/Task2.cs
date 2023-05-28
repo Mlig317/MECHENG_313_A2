@@ -56,12 +56,13 @@ namespace MECHENG_313_A2.Tasks
         { 
             // TODO: Implement this
             fsm.ProcessEvent("config");
-            _taskPage.AddLogEntry(LogWriter("Entering Config"));
-            _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
+
 
             if (fsm.GetCurrentState() == "C")
             {
                 _taskPage.SetTrafficLightState(TrafficLightState.Yellow);
+                _taskPage.AddLogEntry(LogWriter("Entering Config"));
+                _taskPage.SerialPrint(DateTime.Now, "Entering Config  Current State: " + fsm.GetCurrentState() + "\n");
             }
             
             return fsm.GetCurrentState() == "C";
@@ -78,7 +79,7 @@ namespace MECHENG_313_A2.Tasks
                 fsm.ProcessEvent("config");
             }
             _taskPage.AddLogEntry(LogWriter("Exiting Config"));
-            _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
+            _taskPage.SerialPrint(DateTime.Now, "Exiting Config  Current State: " + fsm.GetCurrentState() + "\n");
             _taskPage.SetTrafficLightState(TrafficLightState.Red);
         }
 
@@ -136,7 +137,7 @@ namespace MECHENG_313_A2.Tasks
             fsm.iTable(); //populate the states
             //PrintNStates();
             _taskPage.AddLogEntry(LogWriter("Event Trigger: Start"));
-            _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() );
+            _taskPage.SerialPrint(DateTime.Now, "Event Trigger:Start  Current State: " + fsm.GetCurrentState() + "\n");
             _taskPage.SetTrafficLightState(TrafficLightState.Green);
             // TODO: Implement this
         }
@@ -146,10 +147,10 @@ namespace MECHENG_313_A2.Tasks
             // TODO: Implement this
             fsm.ProcessEvent("tick");
             _taskPage.AddLogEntry(LogWriter("Event Trigger: Tick"));
-            _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
+            _taskPage.SerialPrint(DateTime.Now, "Event Trigger:Tick  Current State: " + fsm.GetCurrentState() + "\n");
 
             // !!! To condense need to find way to convert string to TrafficLightState !!!
-            switch(fsm.GetCurrentState())
+            switch (fsm.GetCurrentState())
                 {
                 case "G":
                     _taskPage.SetTrafficLightState(TrafficLightState.Green);

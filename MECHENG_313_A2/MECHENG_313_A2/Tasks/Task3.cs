@@ -5,6 +5,7 @@ using System.Text;
 using System.Timers;
 using System.Threading.Tasks;
 using static MECHENG_313_A2.Tasks.FiniteStateMachine;
+using System.Runtime.CompilerServices;
 
 namespace MECHENG_313_A2.Tasks
 {
@@ -15,11 +16,11 @@ namespace MECHENG_313_A2.Tasks
         int count = 0;
         bool conT = false;
         
-        public  void ConfigLightLength(int redLength, int greenLength)
-        {
+        //public  void ConfigLightLength(int redLength, int greenLength)
+        //{
             
 
-        }
+        //}
 
         private void tickTock(Object source, ElapsedEventArgs e)
         {
@@ -41,8 +42,8 @@ namespace MECHENG_313_A2.Tasks
                     if (conT)
                     {
                         fsm.ProcessEvent("config");
-                        _taskPage.AddLogEntry(LogWriter());
-                        _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
+                        _taskPage.AddLogEntry(LogWriter("Event Trigger: Entering Config"));
+                        _taskPage.SerialPrint(DateTime.Now, "Entering Config  Current State: " + fsm.GetCurrentState() + "\n");
                         conT = false;
                         count = 0;
 
@@ -84,25 +85,22 @@ namespace MECHENG_313_A2.Tasks
         public override async Task<bool> EnterConfigMode()
         {
            conT = true;
+            _taskPage.AddLogEntry(LogWriter("Waiting to enter Config"));
+            _taskPage.SerialPrint(DateTime.Now, "Waiting to enter Config   Current State: " + fsm.GetCurrentState() + "\n");
             while (fsm.GetCurrentState() != "C")
             {
                 await Task.Delay(100);
             }
             return fsm.GetCurrentState() == "C";
         }
-        public override  void ExitConfigMode()
-        {
-            // TODO: Implement this
 
-            conT = true;
-        }
         public override void Start()
         {
             iAction(); //populate the actions
             fsm.iTable(); //populate the states
             _taskPage.AddLogEntry("starting task 3");
-            _taskPage.AddLogEntry(LogWriter());
-            _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
+            _taskPage.AddLogEntry(LogWriter("Event Trigger: Start"));
+            _taskPage.SerialPrint(DateTime.Now, "Event Trigger:Start   Current State: " + fsm.GetCurrentState() + "\n");
             _taskPage.SetTrafficLightState(TrafficLightState.Green);
             timer = new Timer();
             timer.Elapsed += tickTock;
