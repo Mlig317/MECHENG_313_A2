@@ -66,7 +66,7 @@ namespace MECHENG_313_A2.Tasks
             return fsm.GetCurrentState() == "C";
         }
 
-        public void ExitConfigMode()
+        public virtual void ExitConfigMode()
         {
             // TODO: Implement this
             

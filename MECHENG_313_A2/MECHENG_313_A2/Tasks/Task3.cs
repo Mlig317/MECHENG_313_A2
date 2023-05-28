@@ -13,7 +13,7 @@ namespace MECHENG_313_A2.Tasks
         public override TaskNumber TaskNumber => TaskNumber.Task3;
         static Timer timer;
         int count = 0;
-        
+        bool conT = false;
         
         public  void ConfigLightLength(int redLength, int greenLength)
         {
@@ -33,13 +33,25 @@ namespace MECHENG_313_A2.Tasks
                     Tick();
                     count = 0;
                 }
-            }else if(fsm.GetCurrentState() == "R")
+            }else if((fsm.GetCurrentState() == "R") || (fsm.GetCurrentState() == "B") || (fsm.GetCurrentState() == "C"))
             {
                 count++;
                 if (count == (rTime/100))
                 {
-                    Tick();
-                    count = 0;
+                    if (conT)
+                    {
+                        fsm.ProcessEvent("config");
+                        _taskPage.AddLogEntry(LogWriter());
+                        _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
+                        conT = false;
+                        count = 0;
+                    }
+                    else {
+                        Tick();
+
+                        count = 0;
+                    }
+                    
                 }
             }
             else
@@ -55,25 +67,22 @@ namespace MECHENG_313_A2.Tasks
         }
         // TODO: Implement this
        
-        // Allow you to queue the config mode at any state but will keep ticking until it reaches red
+        // Allow you to queue the config mode at any state but will keep ticking until it reaches end of red
         public override async Task<bool> EnterConfigMode()
         {
-            if (fsm.GetCurrentState() != "R")
+           conT = true;
+            while (fsm.GetCurrentState() != "C")
             {
-                while (fsm.GetCurrentState() != "R")
-                {
-                    await Task.Delay(100);
-                }
-                // needs to wait till the end of the red state before entering config mode
+                await Task.Delay(100);
             }
-            fsm.ProcessEvent("config");
-            _taskPage.AddLogEntry(LogWriter());
-            _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
-            
-            return true;
-            
+            return fsm.GetCurrentState() == "C";
         }
+        public override  void ExitConfigMode()
+        {
+            // TODO: Implement this
 
+            conT = true;
+        }
         public override void Start()
         {
             iAction(); //populate the actions
