@@ -5,7 +5,6 @@ using System.Text;
 using System.Timers;
 using System.Threading.Tasks;
 using static MECHENG_313_A2.Tasks.FiniteStateMachine;
-using System.Runtime.CompilerServices;
 
 namespace MECHENG_313_A2.Tasks
 {
@@ -14,6 +13,7 @@ namespace MECHENG_313_A2.Tasks
         public override TaskNumber TaskNumber => TaskNumber.Task3;
         static Timer timer;
         int count = 0;
+        bool conT = false;
         
         public  void ConfigLightLength(int redLength, int greenLength)
         {
@@ -33,13 +33,38 @@ namespace MECHENG_313_A2.Tasks
                     Tick();
                     count = 0;
                 }
-            }else if(fsm.GetCurrentState() == "R")
+            }else if((fsm.GetCurrentState() == "R") || (fsm.GetCurrentState() == "B") || (fsm.GetCurrentState() == "C"))
             {
                 count++;
                 if (count == (rTime/100))
                 {
-                    Tick();
-                    count = 0;
+                    if (conT)
+                    {
+                        fsm.ProcessEvent("config");
+                        _taskPage.AddLogEntry(LogWriter());
+                        _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
+                        conT = false;
+                        count = 0;
+
+                        switch (fsm.GetCurrentState())
+                        {
+                            case "R":
+                                _taskPage.SetTrafficLightState(TrafficLightState.Red);
+                                break;
+                            case "C":
+                                _taskPage.SetTrafficLightState(TrafficLightState.Yellow);
+                                break;
+                            case "B":
+                                _taskPage.SetTrafficLightState(TrafficLightState.None);
+                                break;
+                        }
+                    }
+                    else {
+                        Tick();
+
+                        count = 0;
+                    }
+                    
                 }
             }
             else
@@ -55,30 +80,28 @@ namespace MECHENG_313_A2.Tasks
         }
         // TODO: Implement this
        
-        // Allow you to queue the config mode at any state but will keep ticking until it reaches red
+        // Allow you to queue the config mode at any state but will keep ticking until it reaches end of red
         public override async Task<bool> EnterConfigMode()
         {
-            if (fsm.GetCurrentState() != "R")
+           conT = true;
+            while (fsm.GetCurrentState() != "C")
             {
-                _taskPage.AddLogEntry(LogWriter("Waiting to enter Config"));
-                _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
-                while (fsm.GetCurrentState() != "R")
-                {
-                    await Task.Delay(100);
-                }
+                await Task.Delay(100);
             }
-            fsm.ProcessEvent("config");
-            _taskPage.AddLogEntry(LogWriter("Entering Config"));
-            _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
-            return true;
+            return fsm.GetCurrentState() == "C";
         }
+        public override  void ExitConfigMode()
+        {
+            // TODO: Implement this
 
+            conT = true;
+        }
         public override void Start()
         {
             iAction(); //populate the actions
             fsm.iTable(); //populate the states
             _taskPage.AddLogEntry("starting task 3");
-            _taskPage.AddLogEntry(LogWriter("Event Trigger: Start"));
+            _taskPage.AddLogEntry(LogWriter());
             _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
             _taskPage.SetTrafficLightState(TrafficLightState.Green);
             timer = new Timer();
