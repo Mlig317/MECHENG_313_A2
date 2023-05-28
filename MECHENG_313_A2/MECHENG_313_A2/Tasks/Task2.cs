@@ -14,6 +14,7 @@ namespace MECHENG_313_A2.Tasks
         MockSerialInterface fakeArduino = new MockSerialInterface();
         public FiniteStateMachine fsm = new FiniteStateMachine();
         public int rTime = 1000, gTime = 1000;
+        public string userMachineTrigger;
         public virtual TaskNumber TaskNumber => TaskNumber.Task2;
 
         protected ITaskPage _taskPage;
@@ -55,7 +56,7 @@ namespace MECHENG_313_A2.Tasks
         { 
             // TODO: Implement this
             fsm.ProcessEvent("config");
-            _taskPage.AddLogEntry(fsm.GetCurrentState());
+            _taskPage.AddLogEntry(LogWriter("Entering Config"));
             _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
 
             if (fsm.GetCurrentState() == "C")
@@ -76,7 +77,7 @@ namespace MECHENG_313_A2.Tasks
             {
                 fsm.ProcessEvent("config");
             }
-            _taskPage.AddLogEntry(LogWriter());
+            _taskPage.AddLogEntry(LogWriter("Exiting Config"));
             _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
             _taskPage.SetTrafficLightState(TrafficLightState.Red);
         }
@@ -120,12 +121,12 @@ namespace MECHENG_313_A2.Tasks
         {
             // does nothing when trying to change from green/yellow to config
         }
-        public string LogWriter()
+        public string LogWriter(string userMachineTrigger)
         {
             string statew = fsm.GetCurrentState();
             DateTime now = DateTime.Now;
             string formattedDateTime = now.ToString("yyyy-MM-dd HH:mm:ss");
-            string combinedString = String.Concat(statew, " ", formattedDateTime);
+            string combinedString = String.Concat(formattedDateTime, "    ", userMachineTrigger, "      Light State: ", statew);
 
             return combinedString;
         }
@@ -134,7 +135,7 @@ namespace MECHENG_313_A2.Tasks
             iAction(); //populate the actions
             fsm.iTable(); //populate the states
             //PrintNStates();
-            _taskPage.AddLogEntry(LogWriter());
+            _taskPage.AddLogEntry(LogWriter("Event Trigger: Start"));
             _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() );
             _taskPage.SetTrafficLightState(TrafficLightState.Green);
             // TODO: Implement this
@@ -144,7 +145,7 @@ namespace MECHENG_313_A2.Tasks
         {
             // TODO: Implement this
             fsm.ProcessEvent("tick");
-            _taskPage.AddLogEntry(LogWriter());
+            _taskPage.AddLogEntry(LogWriter("Event Trigger: Tick"));
             _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
 
             // !!! To condense need to find way to convert string to TrafficLightState !!!

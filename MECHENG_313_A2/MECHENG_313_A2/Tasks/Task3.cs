@@ -5,6 +5,7 @@ using System.Text;
 using System.Timers;
 using System.Threading.Tasks;
 using static MECHENG_313_A2.Tasks.FiniteStateMachine;
+using System.Runtime.CompilerServices;
 
 namespace MECHENG_313_A2.Tasks
 {
@@ -13,7 +14,6 @@ namespace MECHENG_313_A2.Tasks
         public override TaskNumber TaskNumber => TaskNumber.Task3;
         static Timer timer;
         int count = 0;
-        
         
         public  void ConfigLightLength(int redLength, int greenLength)
         {
@@ -60,18 +60,17 @@ namespace MECHENG_313_A2.Tasks
         {
             if (fsm.GetCurrentState() != "R")
             {
+                _taskPage.AddLogEntry(LogWriter("Waiting to enter Config"));
+                _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
                 while (fsm.GetCurrentState() != "R")
                 {
                     await Task.Delay(100);
                 }
-                // needs to wait till the end of the red state before entering config mode
             }
             fsm.ProcessEvent("config");
-            _taskPage.AddLogEntry(LogWriter());
+            _taskPage.AddLogEntry(LogWriter("Entering Config"));
             _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
-            
             return true;
-            
         }
 
         public override void Start()
@@ -79,7 +78,7 @@ namespace MECHENG_313_A2.Tasks
             iAction(); //populate the actions
             fsm.iTable(); //populate the states
             _taskPage.AddLogEntry("starting task 3");
-            _taskPage.AddLogEntry(LogWriter());
+            _taskPage.AddLogEntry(LogWriter("Event Trigger: Start"));
             _taskPage.SerialPrint(DateTime.Now, fsm.GetCurrentState() + "\n");
             _taskPage.SetTrafficLightState(TrafficLightState.Green);
             timer = new Timer();
