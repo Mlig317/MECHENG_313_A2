@@ -45,24 +45,20 @@ namespace MECHENG_313_A2.Tasks
         }
         public void ConfigLightLength(int redLength, int greenLength)
         {
-            // just make it a setter idk
+            // set the red and green light lengths
             rTime = redLength;
-
             gTime = greenLength;
         }
         
 
         public virtual async Task<bool> EnterConfigMode()
         { 
-            // TODO: Implement this
-            fsm.ProcessEvent("config");
-
-
+            await Task.Run(() => fsm.ProcessEvent("config"));
             if (fsm.GetCurrentState() == "C")
             {
-                _taskPage.SetTrafficLightState(TrafficLightState.Yellow);
-                _taskPage.AddLogEntry(LogWriter("Entering Config"));
-                _taskPage.SerialPrint(DateTime.Now, "Entering Config  Current State: " + fsm.GetCurrentState() + "\n");
+                await Task.Run(() => _taskPage.SetTrafficLightState(TrafficLightState.Yellow));
+                await Task.Run(() => _taskPage.AddLogEntry(LogWriter("Entering Config")));
+                await Task.Run(() => _taskPage.SerialPrint(DateTime.Now, "Entering Config  Current State: " + fsm.GetCurrentState() + "\n"));
             }
             
             return fsm.GetCurrentState() == "C";
@@ -70,8 +66,6 @@ namespace MECHENG_313_A2.Tasks
 
         public void ExitConfigMode()
         {
-            // TODO: Implement this
-            
             string cState;
             cState = fsm.GetCurrentState();
             if (cState == "C" || cState == "B")
@@ -84,15 +78,12 @@ namespace MECHENG_313_A2.Tasks
         }
 
         public async Task<string[]> GetPortNames()
-        {
-            // TODO: Implement this
+        { 
             return await fakeArduino.GetPortNames();
         }
 
         public async Task<string> OpenLogFile()
         {
-            // TODO: Implement this
-
             // Help notes: to read a file named "log.txt" under the LocalApplicationData directory,
             // you may use the following code snippet:
             // string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log.txt");
@@ -103,7 +94,7 @@ namespace MECHENG_313_A2.Tasks
             // https://learn.microsoft.com/en-us/dotnet/api/system.io.file?view=netstandard-2.0 for more details.
 
             string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log.txt");
-            File.Create(filePath).Close();                          //create the file 🧙
+            await Task.Run(() => File.Create(filePath).Close());                          //create the file 🧙
 
             return filePath;
         }
@@ -139,12 +130,10 @@ namespace MECHENG_313_A2.Tasks
             _taskPage.AddLogEntry(LogWriter("Event Trigger: Start"));
             _taskPage.SerialPrint(DateTime.Now, "Event Trigger:Start  Current State: " + fsm.GetCurrentState() + "\n");
             _taskPage.SetTrafficLightState(TrafficLightState.Green);
-            // TODO: Implement this
         }
 
         public void Tick()
         {
-            // TODO: Implement this
             fsm.ProcessEvent("tick");
             _taskPage.AddLogEntry(LogWriter("Event Trigger: Tick"));
             _taskPage.SerialPrint(DateTime.Now, "Event Trigger:Tick  Current State: " + fsm.GetCurrentState() + "\n");

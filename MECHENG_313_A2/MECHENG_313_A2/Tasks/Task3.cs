@@ -15,29 +15,24 @@ namespace MECHENG_313_A2.Tasks
         static Timer timer;
         int count = 0;
         bool conT = false;
-        
-        //public  void ConfigLightLength(int redLength, int greenLength)
-        //{
-            
 
-        //}
-
-        private void tickTock(Object source, ElapsedEventArgs e)
+        private void TickTock(Object source, ElapsedEventArgs e)
         {
-           
-            if(fsm.GetCurrentState() == "G")//green length
+
+            if (fsm.GetCurrentState() == "G")//green length
             {
                 count++;
-                
+
                 if (count == (gTime / 100))
                 {
                     Tick();
                     count = 0;
                 }
-            }else if((fsm.GetCurrentState() == "R") || (fsm.GetCurrentState() == "B") || (fsm.GetCurrentState() == "C"))
+            }
+            else if ((fsm.GetCurrentState() == "R") || (fsm.GetCurrentState() == "B") || (fsm.GetCurrentState() == "C")) // 
             {
                 count++;
-                if (count == (rTime/100))
+                if (count == (rTime / 100))
                 {
                     if (conT)
                     {
@@ -60,12 +55,13 @@ namespace MECHENG_313_A2.Tasks
                                 break;
                         }
                     }
-                    else {
+                    else
+                    {
                         Tick();
 
                         count = 0;
                     }
-                    
+
                 }
             }
             else
@@ -77,16 +73,15 @@ namespace MECHENG_313_A2.Tasks
                     count = 0;
                 }
             }
-            
+
         }
-        // TODO: Implement this
-       
+
         // Allow you to queue the config mode at any state but will keep ticking until it reaches end of red
         public override async Task<bool> EnterConfigMode()
         {
-           conT = true;
-            _taskPage.AddLogEntry(LogWriter("Waiting to enter Config"));
-            _taskPage.SerialPrint(DateTime.Now, "Waiting to enter Config   Current State: " + fsm.GetCurrentState() + "\n");
+            conT = true;
+            await Task.Run(() => _taskPage.AddLogEntry(LogWriter("Waiting to enter Config")));
+            await Task.Run(() => _taskPage.SerialPrint(DateTime.Now, "Waiting to enter Config   Current State: " + fsm.GetCurrentState() + "\n"));
             while (fsm.GetCurrentState() != "C")
             {
                 await Task.Delay(100);
@@ -103,13 +98,11 @@ namespace MECHENG_313_A2.Tasks
             _taskPage.SerialPrint(DateTime.Now, "Event Trigger:Start   Current State: " + fsm.GetCurrentState() + "\n");
             _taskPage.SetTrafficLightState(TrafficLightState.Green);
             timer = new Timer();
-            timer.Elapsed += tickTock;
+            timer.Elapsed += TickTock;
             timer.Interval = 100;
             timer.Start();
         }
-        
+
 
     }
-
-    
 }
